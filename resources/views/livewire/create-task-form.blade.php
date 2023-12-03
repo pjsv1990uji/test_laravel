@@ -54,7 +54,7 @@
 
         <div>
             <label class="block font-medium font-bold text-slate-700" for="limit">Max. Repeticiones:</label>
-            <input wire:model="limit" type="number" id="limit" name="limit" min=1 class="text-sm font-medium @error('name')border border-red @enderror">
+            <input wire:model="limit" type="number" id="limit" name="limit" min=1 class="text-sm font-medium @error('name')border border-red @enderror" required>
             @error('limit')
                 <p class="text-sm text-red-500">{{ $message }}</p>
             @enderror
@@ -93,7 +93,6 @@
             <br>
         </div>
 
-        <!-- Botón de envío -->
         <button type="submit" 
         class="block w-full bg-blue-400 hover:bg-purple-700 text-white px-5 py-4 text-md font-semibold rounded">Create Task</button>
     </form>

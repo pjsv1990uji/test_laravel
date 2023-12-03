@@ -21,6 +21,7 @@ class CreateTaskForm extends Component
     protected $rules = [
         'name' => 'required|min:6',
         'description' => 'required',
+        'limit' => 'required',
         'initial_d' => 'required|date|after_or_equal:today',
         'final_d' => 'required|date|after_or_equal:initial_d',
         'selected_opt_freq' => 'required',
@@ -42,19 +43,22 @@ class CreateTaskForm extends Component
 
             $iniDate = Carbon::parse($this->initial_d);
             $finDate = Carbon::parse($this->final_d);
+            $ini_weekDay = $iniDate->dayOfWeek;
 
             $tarea = Task::create([
                 'name' => $this->name,
                 'description' => $this->description,
                 'ini_date' => $iniDate,
+                'next_date' => $iniDate,
                 'fin_date' => $finDate,
                 'interaction' => $this->limit,
                 'frequency' => $this->selected_opt_freq,
+                'week_day' => $ini_weekDay,
             ]);
             $this->resetForm();
             sleep(1);
 
-            $this->success_message = $tarea->name ." has been created!";
+            $this->success_message = $tarea->name ." has been created!" .$ini_weekDay ."veamos";
         }
 
 
