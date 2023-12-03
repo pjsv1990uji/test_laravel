@@ -58,7 +58,7 @@ class CreateTaskForm extends Component
             $this->resetForm();
             sleep(1);
 
-            $this->success_message = $tarea->name ." has been created!" .$ini_weekDay ."veamos";
+            $this->success_message = $tarea->name ." has been created!";
         }
 
 
