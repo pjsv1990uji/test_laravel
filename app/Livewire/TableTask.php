@@ -15,6 +15,9 @@ class TableTask extends Component
     public $query_day = '';
     public $tareaCompletada_regs = [];
 
+    public $sort_by_val = "";
+    public $asc_flag = true;
+
     public function search_day()
     {
         $this->resetPage();
@@ -23,6 +26,17 @@ class TableTask extends Component
     public function search_wk()
     {
         $this->resetPage();
+    }
+
+    public function SortBy($field)
+    {
+        if ($this->sort_by_val === $field) {
+            $this->asc_flag = !$this->asc_flag;
+        } else {
+            $this->asc_flag = true;
+        }
+
+        $this->sort_by_val = $field;
     }
 
     public function TareaCompletada($id_task)
@@ -72,8 +86,12 @@ class TableTask extends Component
                                             $query->where('name', 'like', '%' . $query_day . '%')
                                             ->orWhere('description', 'like', '%' . $query_day . '%');
                 });
-            })->paginate(5, pageName: 'task-today');
-
+            })
+            ->when($this->sort_by_val, function ($query) {
+                $query->orderBy($this->sort_by_val, $this->asc_flag ? 'asc' : 'desc');
+            })
+            ->paginate(5, pageName: 'task-today');
+        
         $excludeIds = collect([
                 $tasks_now->pluck('id')->all()
             ])->flatten()->all();

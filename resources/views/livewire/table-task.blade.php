@@ -28,7 +28,9 @@
                     <thead>
                         <tr class="text-center">
                             <th class="px-6 py-3 bg-gray-50  text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                Tarea
+                                <button wire:click="SortBy('name')" class="hover:bg-transparent">
+                                    Tarea
+                                </button>
                             </th>
                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                 Descripcion
