@@ -17,7 +17,7 @@
                             wire:input="search_day"
                             id="query_day"
                             class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
-                            placeholder="Buscar" type="search">
+                            placeholder="Buscar tareas hoy" type="search">
                     </div>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                 Frecuencia
                             </th>
-                            <th class="px-6 py-3 bg-gray-50"></th>
+                            <th class="px-6 py-3 bg-gray-50">Tarea realizada?</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -74,7 +74,14 @@
                                 <div class="text-sm leading-5 text-gray-900">{{ $task->frequency }} </div>
                             </td>                            
                             <td class="w-1/15 px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-                                <button wire:click="TareaCompletada({{ $task->id }})" wire:loading.attr="disabled">Tarea Completada</button>
+                                <div>
+                                    <input type="checkbox" wire:model="tareaCompletada_regs.{{ $task->id }}" 
+                                            wire:change="TareaCompletada({{ $task->id }})" 
+                                            wire:loading.attr="disabled"
+                                            @if(!empty($tareaCompletada_regs) && isset($tareaCompletada_regs[$task->id]) && $tareaCompletada_regs[$task->id])
+                                                disabled
+                                            @endif>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
@@ -90,7 +97,7 @@
                                 @if ($all_tasks_day->onFirstPage())
                                     <span>Previous</span>
                                 @else
-                                    <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="previousPage" wire:loading.attr="disabled" rel="prev"><< Previous</button>
+                                    <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="previousPage('task-today')" wire:loading.attr="disabled" rel="prev"><< Previous</button>
                                 @endif
                             </span>
                 
@@ -98,7 +105,7 @@
                                 @if ($all_tasks_day->onLastPage())
                                     <span>Next</span>
                                 @else
-                                    <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="nextPage" wire:loading.attr="disabled" rel="next">Next >></button>
+                                    <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="nextPage('task-today')" wire:loading.attr="disabled" rel="next">Next >></button>
                                 @endif
                             </span>
                         </nav>
@@ -152,7 +159,6 @@
                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                 Frecuencia
                             </th>
-                            <th class="px-6 py-3 bg-gray-50"></th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -169,13 +175,10 @@
                                 <div class="text-sm leading-5 text-gray-900">{{ $task->description }} </div>
                             </td>
                             <td class="w-1/15 px-6 py-4 whitespace-no-wrap">
-                                <div class="text-sm leading-5 text-gray-900">{{ $task->next_date }} </div>
+                                <div class="text-center text-sm leading-5 text-gray-900">{{ $task->next_date }} </div>
                             </td>
                             <td class="w-1/15 px-6 py-4 whitespace-no-wrap">
-                                <div class="text-sm leading-5 text-gray-900">{{ $task->frequency }} </div>
-                            </td>                            
-                            <td class="w-1/15 px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+                                <div class="text-center text-sm leading-5 text-gray-900">{{ $task->frequency }} </div>
                             </td>
                         </tr>
                         @endforeach
@@ -191,7 +194,7 @@
                                 @if ($all_tasks_wk->onFirstPage())
                                     <span>Previous</span>
                                 @else
-                                    <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="previousPage" wire:loading.attr="disabled" rel="prev"><< Previous</button>
+                                    <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="previousPage('task-week')" wire:loading.attr="disabled" rel="prev"><< Previous</button>
                                 @endif
                             </span>
                 
@@ -199,7 +202,7 @@
                                 @if ($all_tasks_wk->onLastPage())
                                     <span>Next</span>
                                 @else
-                                    <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="nextPage" wire:loading.attr="disabled" rel="next">Next >></button>
+                                    <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="nextPage('task-week')" wire:loading.attr="disabled" rel="next">Next >></button>
                                 @endif
                             </span>
                         </nav>
