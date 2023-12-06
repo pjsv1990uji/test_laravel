@@ -18,7 +18,9 @@ return new class extends Migration
             $table->date('ini_date');
             $table->date('fin_date');
             $table->integer('interaction')->unsigned();
-            $table->enum('frequency', ['diaria', 'semanal', 'mensual', 'anual']);
+            $table->enum('frequency', ['diaria', 'mensual', 'anual']);
+            $table->integer('week_day')->nullable()->default(0);
+            $table->date('next_date');
             $table->timestamps();
         });
     }

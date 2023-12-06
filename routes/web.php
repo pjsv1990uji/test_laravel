@@ -27,4 +27,4 @@ Route::post('/createTask', function () {
     return view('App\Livewire\CreateTaskForm');
 });
 
-Route::get('tasks', "App\Http\Controllers\ControllerTask@get_tasks")->name("controller-task");
+Route::get('tasks', "App\Http\Controllers\ControllerTask@getTasks")->name("controller-task");

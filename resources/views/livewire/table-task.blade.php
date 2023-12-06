@@ -13,9 +13,9 @@
                                     clip-rule="evenodd"></path>
                             </svg>
                         </div>
-                        <input wire:model="query_day"
-                            wire:input="search_day"
-                            id="query_day"
+                        <input wire:model="searchInputDay"
+                            wire:input="searchTableDaily"
+                            id="searchInputDay"
                             class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
                             placeholder="Buscar tareas hoy" type="search">
                     </div>
@@ -28,12 +28,14 @@
                     <thead>
                         <tr class="text-center">
                             <th class="px-6 py-3 bg-gray-50  text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                <button wire:click="SortBy('name')" class="hover:bg-transparent">
+                                <button wire:click="sortBy('name')" class="hover:bg-transparent">
                                     Tarea
                                 </button>
                             </th>
                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                Descripcion
+                                <button wire:click="sortBy('name')" class="hover:bg-transparent">
+                                    Descripcion
+                                </button>                                
                             </th>
                             <th class="px-6 py-3 bg-gray-50  text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                 Fecha Inicio (AA/mm/dd)
@@ -51,7 +53,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach ($all_tasks_day as $task)
+                        @foreach ($allTaskDay as $task)
                         <tr>
                             <td class="px-10 py-4 w-1/10 whitespace-no-wrap">
                                 <div class="flex items-center">
@@ -77,10 +79,11 @@
                             </td>                            
                             <td class="w-1/15 px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
                                 <div>
-                                    <input type="checkbox" wire:model="tareaCompletada_regs.{{ $task->id }}" 
-                                            wire:change="TareaCompletada({{ $task->id }})" 
+                                    <input type="checkbox" wire:model="registerTasksCompleted.{{ $task->id }}"
+                                            id="checkbox_{{ $task->id }}" 
+                                            wire:change="taskCompleted({{ $task->id }})" 
                                             wire:loading.attr="disabled"
-                                            @if(!empty($tareaCompletada_regs) && isset($tareaCompletada_regs[$task->id]) && $tareaCompletada_regs[$task->id])
+                                            @if(!empty($registerTasksCompleted) && isset($registerTasksCompleted[$task->id]) && $registerTasksCompleted[$task->id])
                                                 disabled
                                             @endif>
                                 </div>
@@ -92,11 +95,11 @@
             </div>
 
             <div>
-                @if ($all_tasks_day->hasPages())
+                @if ($allTaskDay->hasPages())
                     <div class="text-center">
                         <nav role="navigation" aria-label="Pagination Navigation">
                             <span>
-                                @if ($all_tasks_day->onFirstPage())
+                                @if ($allTaskDay->onFirstPage())
                                     <span>Previous</span>
                                 @else
                                     <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="previousPage('task-today')" wire:loading.attr="disabled" rel="prev"><< Previous</button>
@@ -104,7 +107,7 @@
                             </span>
                 
                             <span>
-                                @if ($all_tasks_day->onLastPage())
+                                @if ($allTaskDay->onLastPage())
                                     <span>Next</span>
                                 @else
                                     <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="nextPage('task-today')" wire:loading.attr="disabled" rel="next">Next >></button>
@@ -135,9 +138,9 @@
                                     clip-rule="evenodd"></path>
                             </svg>
                         </div>
-                        <input wire:model="query_wk"
-                            wire:input="search_wk"
-                            id="query_wk"
+                        <input wire:model="searchInputWeek"
+                            wire:input="searchTableWeek"
+                            id="searchInputWeek"
                             class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out"
                             placeholder="Buscar" type="search">
                     </div>
@@ -164,7 +167,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach ($all_tasks_wk as $task)
+                        @foreach ($allTaskWeek as $task)
                         <tr>
                             <td class="px-10 py-4 w-1/10 whitespace-no-wrap">
                                 <div class="flex items-center">
@@ -189,11 +192,11 @@
             </div>
 
             <div>
-                @if ($all_tasks_wk->hasPages())
+                @if ($allTaskWeek->hasPages())
                     <div class="text-center">
                         <nav role="navigation" aria-label="Pagination Navigation">
                             <span>
-                                @if ($all_tasks_wk->onFirstPage())
+                                @if ($allTaskWeek->onFirstPage())
                                     <span>Previous</span>
                                 @else
                                     <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="previousPage('task-week')" wire:loading.attr="disabled" rel="prev"><< Previous</button>
@@ -201,7 +204,7 @@
                             </span>
                 
                             <span>
-                                @if ($all_tasks_wk->onLastPage())
+                                @if ($allTaskWeek->onLastPage())
                                     <span>Next</span>
                                 @else
                                     <button class="px-4 py-1 text-sm font-semibold border border-purple-200 hover:text-white hover:bg-purple-600" wire:click="nextPage('task-week')" wire:loading.attr="disabled" rel="next">Next >></button>

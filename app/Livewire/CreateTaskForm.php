@@ -11,10 +11,10 @@ class CreateTaskForm extends Component
     public $name;
     public $description;
     public $limit;
-    public $initial_d;
-    public $final_d;
-    public $opt_freq = ['anual', 'mensual', 'diaria'];
-    public $selected_opt_freq;
+    public $initialDate;
+    public $finalDate;
+    public $frequencyOptions = ['anual', 'mensual', 'diaria'];
+    public $selectedFreOpt;
 
     public $success_message=null;
 
@@ -22,9 +22,9 @@ class CreateTaskForm extends Component
         'name' => 'required|min:6',
         'description' => 'required',
         'limit' => 'required',
-        'initial_d' => 'required|date|after_or_equal:today',
-        'final_d' => 'required|date|after_or_equal:initial_d',
-        'selected_opt_freq' => 'required',
+        'initialDate' => 'required|date|after_or_equal:today',
+        'finalDate' => 'required|date|after_or_equal:initialDate',
+        'selectedFreOpt' => 'required',
     ];
 
     public function updated($propertyName){
@@ -41,8 +41,8 @@ class CreateTaskForm extends Component
             return;
         }else{
 
-            $iniDate = Carbon::parse($this->initial_d);
-            $finDate = Carbon::parse($this->final_d);
+            $iniDate = Carbon::parse($this->initialDate);
+            $finDate = Carbon::parse($this->finalDate);
             $ini_weekDay = $iniDate->dayOfWeek;
 
             $tarea = Task::create([
@@ -52,7 +52,7 @@ class CreateTaskForm extends Component
                 'next_date' => $iniDate,
                 'fin_date' => $finDate,
                 'interaction' => $this->limit,
-                'frequency' => $this->selected_opt_freq,
+                'frequency' => $this->selectedFreOpt,
                 'week_day' => $ini_weekDay,
             ]);
             $this->resetForm();
@@ -70,9 +70,9 @@ class CreateTaskForm extends Component
         $this->name = '';
         $this->description = '';
         $this->limit = '';
-        $this->ini_date = null;
-        $this->fin_date = null;
-        $this->selected_opt_freq = null;
+        $this->initialDate = '';
+        $this->finalDate = '';
+        $this->selectedFreOpt = null;
     }
 
 

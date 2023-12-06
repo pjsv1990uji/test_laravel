@@ -11,35 +11,51 @@ use Carbon\Carbon;
 class TableTask extends Component
 {
     use WithPagination;
-    public $query_wk = '';
-    public $query_day = '';
-    public $tareaCompletada_regs = [];
+    public $searchInputWeek = '';
+    public $searchInputDay = '';
+    public $registerTasksCompleted = [];
 
-    public $sort_by_val = "";
-    public $asc_flag = true;
+    public $sortColumnBy = "";
+    public $flagAsc = true;
 
-    public function search_day()
+    /**
+    * Resets the table to the first page
+    */
+    public function searchTableDaily()
     {
         $this->resetPage();
     }
 
-    public function search_wk()
+    /**
+    * Resets the table to the first page
+    */
+    public function searchTableWeek()
     {
         $this->resetPage();
     }
 
-    public function SortBy($field)
+    /**
+    * Sort table by column
+    *
+    * @param string $field (column name)
+    */
+    public function sortBy($field)
     {
-        if ($this->sort_by_val === $field) {
-            $this->asc_flag = !$this->asc_flag;
+        if ($this->sortColumnBy === $field) {
+            $this->flagAsc = !$this->flagAsc;
         } else {
-            $this->asc_flag = true;
+            $this->flagAsc = true;
         }
 
-        $this->sort_by_val = $field;
+        $this->sortColumnBy = $field;
     }
 
-    public function TareaCompletada($id_task)
+    /**
+    * Calculate the new date and register the task as marked
+    *
+    * @param int $id_task (task identifier)
+    */
+    public function taskCompleted($id_task)
     {   
         $tarea = Task::find($id_task);
 
@@ -62,7 +78,7 @@ class TableTask extends Component
             
             $tarea->interaction-=1;
             $tarea->save();
-            $this->tareaCompletada_regs[$id_task] = true;
+            $this->registerTasksCompleted[$id_task] = true;
             session()->flash('success', 'Tarea completada con éxito');
         }
     }
@@ -71,42 +87,48 @@ class TableTask extends Component
     {   
         $now = Carbon::now();
 
-        $final_day_wk = $now->copy()->endOfWeek(Carbon::SUNDAY);
-        $initial_day_wk = $now->startOfWeek();
+        $finalDayWk = $now->copy()->endOfWeek(Carbon::SUNDAY);
+        $initialDayWk = $now->startOfWeek();
 
         $today = Carbon::today();
 
-
-        $tasks_now = Task::where('interaction', '>', 0)
-            ->whereDate('next_date', '>=', $initial_day_wk)
-            ->whereDate('next_date', '<=', $final_day_wk)
-            ->whereDate('next_date', '=', $today)
-            ->when($this->query_day, function ($query, $query_day) {
-                return $query->where(function ($query) use ($query_day) {
-                                            $query->where('name', 'like', '%' . $query_day . '%')
-                                            ->orWhere('description', 'like', '%' . $query_day . '%');
-                });
-            })
-            ->when($this->sort_by_val, function ($query) {
-                $query->orderBy($this->sort_by_val, $this->asc_flag ? 'asc' : 'desc');
-            })
-            ->paginate(5, pageName: 'task-today');
         
+        $tasksNow = Task::FilterDate(
+            0, 
+            $initialDayWk,
+            $finalDayWk,
+            $today
+        );
+
         $excludeIds = collect([
-                $tasks_now->pluck('id')->all()
-            ])->flatten()->all();
+            $tasksNow->pluck('id')->all()
+        ])->flatten()->all();
+        
+        $tasksThisWk = Task::FilterDate(
+            0,
+            $initialDayWk,
+            $finalDayWk
+        );
 
-        $query_this_wk = Task::where('interaction', '>', 0)
-            ->whereDate('next_date', '>=', $initial_day_wk)
-            ->whereDate('next_date', '<=', $final_day_wk)
-            ->whereNotIn('id', $excludeIds)
-            ->when($this->query_wk, function ($query, $query_wk) {
-                return $query->where(function ($query) use ($query_wk) {
-                                            $query->where('name', 'like', '%' . $query_wk . '%')
-                                            ->orWhere('description', 'like', '%' . $query_wk . '%');
-                });
-            })->paginate(5, ['*'], 'task-week');
+        $tasksNow = $tasksNow->when($this->searchInputDay, function ($query, $search) {
+            return $query->where(function ($query) use ($search) {
+                                        $query->where('name', 'like', '%' . $search . '%')
+                                        ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        })
+        ->when($this->sortColumnBy, function ($query) {
+            $query->orderBy($this->sortColumnBy, $this->flagAsc ? 'asc' : 'desc');
+        })
+        ->paginate(5, pageName: 'task-today');
 
-        return view('livewire.table-task', array('all_tasks_day'=>$tasks_now, 'all_tasks_wk'=>$query_this_wk));
+        $tasksThisWk = $tasksThisWk->whereNotIn('id', $excludeIds)
+            ->when($this->searchInputWeek, function ($query, $search) {
+            return $query->where(function ($query) use ($search) {
+                                        $query->where('name', 'like', '%' . $search . '%')
+                                        ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        })->paginate(5, ['*'], 'task-week');
+        
+        return view('livewire.table-task', array('allTaskDay'=>$tasksNow, 'allTaskWeek'=>$tasksThisWk));
     }
 }

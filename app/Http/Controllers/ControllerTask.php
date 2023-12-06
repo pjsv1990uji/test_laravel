@@ -7,8 +7,7 @@ use App\Models\Task;
 
 class ControllerTask extends Controller
 {
-    //
-    public function get_tasks(){
+    public function getTasks(){
         return view('taskView');
     }
 }
