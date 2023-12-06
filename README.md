@@ -18,3 +18,5 @@ Una vez que hayas descargado el proyecto, asegúrate de tener todos los paquetes
     ```
 
 Estos comandos aseguran que la aplicación se ejecute correctamente con todas las dependencias y los assets compilados.
+
+Para los formatos CSS se esta utilziando: `Tailwind CSS`.
