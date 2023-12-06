@@ -1,8 +1,10 @@
+// resources/lang/en/validation.php
+
 return [
-    'custom' => [
-        'initial_d' => [
-            'required' => 'El campo de fecha inicial es obligatorio.',
-            // Agrega más mensajes personalizados según sea necesario
-        ],
+    'initialDate' => [
+        'required' => 'El campo de fecha inicial es obligatorio.',
+    ],
+    'finalDate' => [
+        'required' => 'El campo de fecha final es obligatorio.',
     ],
 ];

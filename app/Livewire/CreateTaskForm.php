@@ -13,10 +13,24 @@ class CreateTaskForm extends Component
     public $limit;
     public $initialDate;
     public $finalDate;
-    public $frequencyOptions = ['anual', 'mensual', 'diaria'];
+    public $frequencyOptions = ['diaria', 'mensual', 'anual'];
     public $selectedFreOpt;
 
     public $success_message=null;
+
+    protected $messages = [
+        'name.required' => 'Nombre es obligatorio.',
+        'name.min' => 'Nombre debe tener al menos :min caracteres.',
+        'description.required' => 'Descripción es obligatorio.',
+        'limit.required' => 'Debe colocar un numero mayor a 0.',
+        'initialDate.required' => 'El campo de fecha inicial es obligatorio.',
+        'initialDate.date' => 'El campo de fecha inicial debe ser una fecha válida.',
+        'initialDate.after_or_equal' => 'El campo de fecha inicial debe ser igual o posterior a hoy.',
+        'finalDate.required' => 'El campo de fecha final es obligatorio.',
+        'finalDate.date' => 'El campo de fecha final debe ser una fecha válida.',
+        'finalDate.after_or_equal' => 'El campo de fecha final debe ser igual o posterior a la fecha inicial.',
+        'selectedFreOpt.required' => 'Seleccione una opcion valida para la frecuencia de la respectiva tarea.',
+    ];
 
     protected $rules = [
         'name' => 'required|min:6',

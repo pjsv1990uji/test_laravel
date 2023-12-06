@@ -65,7 +65,7 @@
             <label class="block font-medium font-bold text-slate-700" for="initialDate">Fecha de Inicio:</label>
             <input wire:model="initialDate" type="date" id="initialDate" name="initialDate">
             @error('initialDate')
-                <p class="text-sm text-red-500">@lang('validation.custom.initialDate.required')</p>
+                <p class="text-sm text-red-500">{{ $message }}</p>
             @enderror
             <br>
         </div>
