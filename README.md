@@ -5,28 +5,27 @@ Una vez que hayas descargado el proyecto, asegúrate de tener todos los paquetes
 
 ## Pasos para ejecutar el proyecto
 
-1. Instala las dependencias: 
+1. Instala las dependencias una vez que se encuentre dentro de la carpeta clonada: 
     ```bash
     composer install
     ```
 
 2. Copia el archivo .env.example y genera el .env.
-    ```
-    bashcp .env.example .env
+    ```bash
+    cp .env.example .env
     ```
 
 3. Genera la clave de aplicación: 
-    ```
-    bashphp artisan key:generate
+    ```bash
+    php artisan key:generate
     ```
 
-4. Crea las tablas (se hizo la prueba con sqlite).
-    ```
-    bashphp artisan migrate
+4. Crear las tablas (se hizo la prueba con sqlite, por lo que si se desea trabajar con lo mismo se debe cambiar la configuracion en el .env a DB_CONNECTION=sqlite previo a ejecutar el siguiente comando).
+    ```bash
+    php artisan migrate
     ```
 
 5. Ejecuta el servidor de desarrollo de Laravel:
-
     ```bash
     php artisan serve
     ```
