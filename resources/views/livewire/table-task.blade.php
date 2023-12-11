@@ -87,6 +87,11 @@
                                                 disabled
                                             @endif>
                                 </div>
+                                @if(!empty($messageErrors) && isset($messageErrors[$task->id]) && $messageErrors[$task->id])
+                                    <div class="alert alert-danger" id="div_{{ $task->id }}" >
+                                        <p class="text-sm text-red-500">{{ $messageErrors[$task->id] }}</p>
+                                    </div>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

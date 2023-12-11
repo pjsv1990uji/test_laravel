@@ -6,6 +6,8 @@ use Livewire\WithPagination;
 use Livewire\Component;
 use App\Models\Task;
 
+use App\Enums\frequencyType;
+
 use Carbon\Carbon;
 
 class TableTask extends Component
@@ -17,6 +19,8 @@ class TableTask extends Component
 
     public $sortColumnBy = "";
     public $flagAsc = true;
+
+    public $messageErrors = [];
 
     /**
     * Resets the table to the first page
@@ -57,6 +61,7 @@ class TableTask extends Component
     */
     public function taskCompleted($id_task)
     {   
+        $processCompleted=true;
         $tarea = Task::find($id_task);
 
         if (!$tarea) {
@@ -65,21 +70,43 @@ class TableTask extends Component
 
         $today = Carbon::today();
         if($tarea->updated_at != $today){
-            if($tarea->frequency == 'diaria'){
-                $tarea->next_date = today()->addDay();
-            }elseif($tarea->frecuency == 'mensual'){
-                $final_day_after_month = $today->copy()->addMonth()->endOfWeek(Carbon::SUNDAY);
-                $initial_day_after_month = $final_day_after_month->startOfWeek();
-                $day_after_month_weekday = $initial_day_after_month->copy()->addDays($today->dayOfWeek-1);
-                $tarea->next_date = $day_after_month_weekday;
-            }else{
-                $tarea->next_date = $today->copy()->addYear();
+            $valueData = $tarea->frequency->value;
+            if(frequencyType::fromCase($valueData)){
+                if($valueData == frequencyType::diaria->value){
+                    if($today->dayOfWeek == Carbon::FRIDAY) {
+                        $tarea->next_date = $today->next(Carbon::MONDAY);
+                    }else{
+                        $tarea->next_date = today()->addDay();
+                    }
+                }elseif($valueData == frequencyType::mensual->value){
+                    $final_day_after_month = $today->copy()->addMonth()->endOfWeek(Carbon::SUNDAY);
+                    $initial_day_after_month = $final_day_after_month->startOfWeek();
+                    $day_after_month_weekday = $initial_day_after_month->copy()->addDays($today->dayOfWeek-1);
+                    $tarea->next_date = $day_after_month_weekday;
+                }elseif($valueData == frequencyType::anual->value){
+                    $nextYear = $today->copy()->addYear();
+                    if($nextYear->dayOfWeek == Carbon::FRIDAY) {
+                        $tarea->next_date = $nextYear->next(Carbon::MONDAY);
+                    }else{
+                        $tarea->next_date = $nextYear;
+                    }
+                }
+                else{                    
+                    $processCompleted = false;
+                }
+                if($processCompleted){
+                    $tarea->interaction-=1;
+                    $tarea->save();
+                    $this->registerTasksCompleted[$id_task] = true;
+                }
+                else{
+                    $this->messageErrors[$id_task] = 'Se produjo un error al actualizar la nueva fecha.';
+                    $this->registerTasksCompleted[$id_task] = false;
+                }
+                
+            }else {
+                $this->messageErrors[$id_task] = 'No se encuentra el tipo de periodicidad de la tarea';
             }
-            
-            $tarea->interaction-=1;
-            $tarea->save();
-            $this->registerTasksCompleted[$id_task] = true;
-            session()->flash('success', 'Tarea completada con éxito');
         }
     }
     

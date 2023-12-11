@@ -4,7 +4,12 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Task;
+use Illuminate\Validation\Rules\Enum;
+
+use App\Enums\frequencyType;
+
 use Carbon\Carbon;
+
 
 class CreateTaskForm extends Component
 {
@@ -13,7 +18,7 @@ class CreateTaskForm extends Component
     public $limit;
     public $initialDate;
     public $finalDate;
-    public $frequencyOptions = ['diaria', 'mensual', 'anual'];
+    public $frequencyOptions = [];
     public $selectedFreOpt;
 
     public $success_message=null;
@@ -30,6 +35,7 @@ class CreateTaskForm extends Component
         'finalDate.date' => 'El campo de fecha final debe ser una fecha válida.',
         'finalDate.after_or_equal' => 'El campo de fecha final debe ser igual o posterior a la fecha inicial.',
         'selectedFreOpt.required' => 'Seleccione una opcion valida para la frecuencia de la respectiva tarea.',
+        'selectedFreOpt' => 'Seleccione una opcion valida para la frecuencia de la respectiva tarea.',
     ];
 
     protected $rules = [
@@ -45,8 +51,20 @@ class CreateTaskForm extends Component
         $this->validateOnly($propertyName);
     }
 
+    public function mount()
+    {
+        foreach (frequencyType::cases() as $value) {
+            $this->frequencyOptions[$value->name] = $value->value;
+        }
+    }
+
     public function save(){
-        $this->validate();
+        $this->validate(['name' => 'required|min:6',
+        'description' => 'required',
+        'limit' => 'required',
+        'initialDate' => 'required|date|after_or_equal:today',
+        'finalDate' => 'required|date|after_or_equal:initialDate',
+        'selectedFreOpt' => [new Enum(frequencyType::class)],]);
        
         $exist_task = Task::where("name", $this->name)->exists();
         if($exist_task){

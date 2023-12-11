@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Enums\frequencyType;
 use Carbon\Carbon;
 
 class Task extends Model
@@ -13,6 +14,10 @@ class Task extends Model
 
     protected $fillable=["name", "description", "interaction", "ini_date","fin_date","frequency", "week_day", "next_date"];
     protected $dates = ['ini_date', 'fin_date', 'next_date'];
+
+    protected $casts = [
+        'frequency' => frequencyType::class,
+    ];
 
     /**
     * Filter Task model by a date range

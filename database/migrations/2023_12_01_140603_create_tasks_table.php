@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\frequencyType;
 
 return new class extends Migration
 {
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->date('ini_date');
             $table->date('fin_date');
             $table->integer('interaction')->unsigned();
-            $table->enum('frequency', ['diaria', 'mensual', 'anual']);
+            $table->enum('frequency', ['diaria', 'mensual', 'anual'])->default(frequencyType::diaria->value);;
             $table->integer('week_day')->nullable()->default(0);
             $table->date('next_date');
             $table->timestamps();
